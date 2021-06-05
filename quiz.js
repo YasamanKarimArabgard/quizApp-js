@@ -8,26 +8,26 @@ let headerQuestion = document.getElementById("header-question");
 let questionNumber = document.getElementById("number");
 let timer = document.getElementById("timer");
 let timeOver = document.getElementById("timeover");
+let answerContent = document.getElementById("answer-content");
 let questionNum = 1;
 let sec = 30;
 let i = 0;
-let lablA = document.getElementById("choiceA");
-let lablB = document.getElementById("choiceB");
-let lablC = document.getElementById("choiceC");
-let lablD = document.getElementById("choiceD");
 
 //our questions
 const myQuestion = [{
+        id: 1,
         question: "what is the sky color?",
         answers: ["red", "black", "blue", "pink"],
         correctAnswer: "c",
     },
     {
+        id: 2,
         question: "who is the cat enemy ? ",
         answers: ["ship", "elephent", "dog", "chicken"],
         correctAnswer: "c",
     },
     {
+        id: 3,
         question: "what we breathe to stay alive?",
         answers: ["H2o", "Co2", "S", "Br"],
         correctAnswer: "a",
@@ -40,7 +40,7 @@ nextbtn.addEventListener("click", function nextQuestion() {
     questionPlus();
 });
 
-function questionPlus() {
+const questionPlus = () => {
     questionNumber.innerHTML = "Q number : " + questionNum + " / 3"; //when click on next the q number++;
     questionNum++;
     if (questionNum == 3) {
@@ -58,7 +58,7 @@ startbtn.addEventListener("click", function startGame() {
     headerQuestion.style.display = "flex"; //to diplay it in js flex
 });
 
-function myTimer() {
+const myTimer = () => {
     timer.innerHTML = sec + "s of 30s";
     sec--;
     if (sec == -1) {
@@ -70,21 +70,19 @@ function myTimer() {
     }
 }
 
-function pageLoad() {
-    startbtn.onclick = alertMe();
-}
+const pageLoad = () => startbtn.onclick = alertMe();
 
-function alertMe() {
-    setInterval(myTimer, 1000);
-}
+
+const alertMe = () => setInterval(myTimer, 1000);
+
 
 const buildQuiz = () => {
     questionP.textContent = myQuestion[i].question;
     myQuestion[i].answers.forEach((answer) => {
-        console.log(answer);
-        document.getElementById("answer-block").innerHTML += `<div class="option">
+        answerContent.innerHTML += `<div class="option">
                 <input type="radio" id="${answer}" value="${answer}" />
                 <label for="${answer}">${answer}</label>
-            </div>`;
+            </div>`
     });
+    i++;
 };
