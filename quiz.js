@@ -1,56 +1,48 @@
-let option = document.querySelectorAll(".option");
-let nextbtn = document.getElementById("next");
-let prev = document.getElementById("prev");
+let submitButton = document.getElementById("submit");
+let nextButton = document.getElementById("next");
+let prev = document.getElementById("previous");
 let questionP = document.getElementById("question");
 let form = document.getElementById("active");
 let startbtn = document.getElementById("start");
 let headerQuestion = document.getElementById("header-question");
-let questionNumber = document.getElementById("number");
 let timer = document.getElementById("timer");
 let timeOver = document.getElementById("timeover");
 let answerContent = document.getElementById("answer-content");
-let questionNum = 1;
 let sec = 30;
 let i = 0;
 
 //our questions
 const myQuestion = [{
-        id: 1,
         question: "what is the sky color?",
-        answers: ["red", "black", "blue", "pink"],
-        correctAnswer: "c",
+        answers: {
+            a: "blue",
+            b: "red"
+        },
+        correctAnswer: "a",
     },
     {
-        id: 2,
         question: "who is the cat enemy ? ",
-        answers: ["ship", "elephent", "dog", "chicken"],
+        answers: {
+            a: "ship",
+            b: "elephent",
+            c: "dog",
+            d: "chicken"
+        },
         correctAnswer: "c",
     },
     {
-        id: 3,
         question: "what we breathe to stay alive?",
-        answers: ["H2o", "Co2", "S", "Br"],
+        answers: {
+            a: "H2o",
+            b: "Co2",
+            c: "S"
+        },
         correctAnswer: "a",
     },
 ];
 
-//show next question
-nextbtn.addEventListener("click", function nextQuestion() {
-    buildQuiz();
-    questionPlus();
-});
-
-const questionPlus = () => {
-    questionNumber.innerHTML = "Q number : " + questionNum + " / 3"; //when click on next the q number++;
-    questionNum++;
-    if (questionNum == 3) {
-        return;
-    }
-}
-
 startbtn.addEventListener("click", function startGame() {
     buildQuiz();
-    questionPlus();
     pageLoad();
     startbtn.remove("#start"); //to hide start button
     form.style.display = "block"; //to show form
@@ -75,14 +67,50 @@ const pageLoad = () => startbtn.onclick = alertMe();
 
 const alertMe = () => setInterval(myTimer, 1000);
 
-
 const buildQuiz = () => {
-    questionP.textContent = myQuestion[i].question;
-    myQuestion[i].answers.forEach((answer) => {
-        answerContent.innerHTML += `<div class="option">
-                <input type="radio" id="${answer}" value="${answer}" />
-                <label for="${answer}">${answer}</label>
-            </div>`
+    const output = [];
+    myQuestion.forEach(
+        (question, questionNumber) => {
+            const answers = [];
+
+            for (answer in question.answers) {
+                answers.push(
+                    `<label>
+              <input type="radio" name="question${questionNumber}" value="${answer}">
+              ${answer} :
+              ${question.answers[answer]}
+            </label>`
+                );
+            }
+
+            // add this question and its answers to the output
+            output.push(
+                `<div class="question"> ${question.question} </div>
+          <div class="answers"> ${answers.join('')} </div>`
+            );
+        }
+    );
+    answerContent.innerHTML = output.join('');
+}
+
+
+submitButton.addEventListener("click", () => {
+    const answerContainers = answerContent.querySelectorAll('.answers');
+    let numCorrect = 0;
+
+    myQuestion.forEach((question, questionNumber) => {
+
+        const answerContainer = answerContainers[questionNumber];
+        const selector = `input[name=question${questionNumber}]:checked`;
+        const userAnswer = (answerContainer.querySelector(selector) || {}).value;
+
+        if (userAnswer === question.correctAnswer) {
+            numCorrect++;
+            answerContainers[questionNumber].style.color = "darkgreen";
+        } else {
+            answerContainers[questionNumber].style.color = "darkred";
+        }
     });
-    i++;
-};
+
+    resultsContainer.innerHTML = `${numCorrect} out of ${myQuestion.length}`;
+});
